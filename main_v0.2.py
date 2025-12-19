@@ -30,18 +30,27 @@ st.markdown("""
 
 st.markdown("""
     <style>
-    /* 특정 클래스를 지정하여 시스템 테마가 간섭하지 못하게 함 */
+    .cimon-header-box {
+        background-color: #004488 !important;
+        padding: 25px !important;
+        border-radius: 0 0 20px 20px !important;
+        margin-bottom: 30px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        display: block !important;
+        width: 100% !important;
+    }
     .cimon-header-text {
         color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important; /* 웹킷 브라우저 강제 설정 */
+        -webkit-text-fill-color: #FFFFFF !important;
         text-decoration: none !important;
+        margin: 0 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # 헤더
 st.markdown("""
-    <div style="background-color: #004488 !important; padding: 25px; border-radius: 0 0 20px 20px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: none !important;">
+    <div class="cimon-header-box">
         <h2 style="margin:0; display: flex; align-items: center; border: none !important; background: transparent !important;">
             <span class="cimon-header-text" style="font-size: 1.6rem !important; font-weight: 700 !important;">
                 (주)싸이몬
