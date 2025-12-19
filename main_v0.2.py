@@ -36,14 +36,24 @@ st.markdown("""
         border-radius: 0 0 20px 20px !important;
         margin-bottom: 30px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-        display: block !important;
-        width: 100% !important;
     }
-    .cimon-header-text {
+    .cimon-company-name {
         color: #FFFFFF !important;
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
         -webkit-text-fill-color: #FFFFFF !important;
-        text-decoration: none !important;
-        margin: 0 !important;
+    }
+    .cimon-dept-name {
+        color: #FFFFFF !important;
+        font-size: 1.0rem !important; /* 부서명 폰트 크기 축소 */
+        font-weight: 400 !important;
+        opacity: 0.9 !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    .vertical-line {
+        margin: 0 15px;
+        border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+        height: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -51,15 +61,11 @@ st.markdown("""
 # 헤더
 st.markdown("""
     <div class="cimon-header-box">
-        <h2 style="margin:0; display: flex; align-items: center; border: none !important; background: transparent !important;">
-            <span class="cimon-header-text" style="font-size: 1.6rem !important; font-weight: 700 !important;">
-                (주)싸이몬
-            </span>
-            <span style="margin: 0 15px; border-left: 2px solid #FFFFFF !important; height: 20px; opacity: 0.8 !important;"></span>
-            <span class="cimon-header-text" style="font-size: 1.1rem !important; font-weight: 400 !important;">
-                Technical Sales Engineer Team
-            </span>
-        </h2>
+        <div style="display: flex; align-items: center; border: none !important;">
+            <span class="cimon-company-name">(주)싸이몬</span>
+            <div class="vertical-line"></div>
+            <span class="cimon-dept-name">Technical Sales Engineer Team</span>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
