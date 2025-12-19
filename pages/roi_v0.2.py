@@ -72,15 +72,38 @@ with right:
     with r1: st.metric("연간 기대 총 절감액", f"{total_save/1e8:.2f} 억")
     with r2: st.metric("예상 투자 회수 기간", f"{payback:.2f} 년")
 
-    # 그래프
+    # --- 그래프 수정 파트: 라이트/다크 테마 자동 대응 ---
     years = [f"{i}년" for i in range(6)]
     cash_flow = [(total_save * i) - invest for i in range(6)]
-    fig = go.Figure(go.Scatter(x=years, y=cash_flow, mode='lines+markers', fill='tozeroy', line=dict(color='#0077ff')))
-    fig.update_layout(template="none", height=350, margin=dict(l=0,r=0,t=10,b=10))
-    st.plotly_chart(fig, use_container_width=True)
-
     
-    # 사라졌던 아이콘 항목 복구
+    fig = go.Figure(go.Scatter(
+        x=years, 
+        y=cash_flow, 
+        mode='lines+markers+text',
+        text=[f"{v/10000:,.0f}만" for v in cash_flow],
+        textposition="top center",
+        fill='tozeroy', 
+        line=dict(color='#0077ff', width=4),
+        marker=dict(size=8, color='#2ea043')
+    ))
+    
+    fig.update_layout(
+        template="none", # 특정 테마를 강제하지 않음
+        height=350, 
+        margin=dict(l=10, r=10, t=30, b=10),
+        paper_bgcolor='rgba(0,0,0,0)', # 배경 투명화
+        plot_bgcolor='rgba(0,0,0,0)',  # 차트 영역 투명화
+        hovermode="x unified"
+    )
+    
+    # 그리드 선을 반투명하게 설정하여 배경색에 관계없이 조화롭게 표현
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    
+    st.plotly_chart(fig, use_container_width=True)
+    # --- 그래프 수정 끝 ---
+
+    # 세부 절감 항목
     st.markdown(f"""
     <div class="result-section">
         <p style="font-weight:bold; color:#0077ff; border-bottom:2px solid #0077ff; padding-bottom:5px;">📋 세부 절감 항목</p>
