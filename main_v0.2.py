@@ -28,15 +28,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+    /* 특정 클래스를 지정하여 시스템 테마가 간섭하지 못하게 함 */
+    .cimon-header-text {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important; /* 웹킷 브라우저 강제 설정 */
+        text-decoration: none !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # 헤더
 st.markdown("""
-    <div style="background-color: #004488 !important; padding: 25px; border-radius: 0 0 20px 20px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-        <h2 style="margin:0; display: flex; align-items: center; border: none !important;">
-            <span style="color: #ffffff !important; font-size: 1.6rem !important; font-weight: 700 !important; text-decoration: none !important;">
+    <div style="background-color: #004488 !important; padding: 25px; border-radius: 0 0 20px 20px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: none !important;">
+        <h2 style="margin:0; display: flex; align-items: center; border: none !important; background: transparent !important;">
+            <span class="cimon-header-text" style="font-size: 1.6rem !important; font-weight: 700 !important;">
                 (주)싸이몬
             </span>
-            <span style="margin: 0 15px; border-left: 2px solid #ffffff !important; height: 20px; opacity: 0.5;"></span>
-            <span style="color: #ffffff !important; font-size: 1.1rem !important; font-weight: 400 !important; text-decoration: none !important;">
+            <span style="margin: 0 15px; border-left: 2px solid #FFFFFF !important; height: 20px; opacity: 0.8 !important;"></span>
+            <span class="cimon-header-text" style="font-size: 1.1rem !important; font-weight: 400 !important;">
                 Technical Sales Engineer Team
             </span>
         </h2>
