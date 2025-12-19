@@ -30,8 +30,12 @@ st.markdown("""
 
 # 헤더
 st.markdown("""
-    <div style="background-color: #004488; padding: 25px; color: white !important; border-radius: 0 0 20px 20px; margin-bottom: 30px;">
-        <h2 style="margin:0; color: white !important;">(주)싸이몬 <span style="font-weight:300; opacity:0.8; font-size:1.1rem;">| Technical Sales Engineer Team</span></h2>
+    <div style="background-color: #004488; padding: 25px; border-radius: 0 0 20px 20px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+        <h2 style="margin:0; color: white !important; font-size: 1.6rem; display: flex; align-items: center;">
+            <span style="color: white !important;">(주)싸이몬</span>
+            <span style="margin: 0 15px; border-left: 1px solid rgba(255,255,255,0.3); height: 20px;"></span>
+            <span style="font-weight: 400; color: white !important; font-size: 1.1rem;">Technical Sales Engineer Team</span>
+        </h2>
     </div>
 """, unsafe_allow_html=True)
 
