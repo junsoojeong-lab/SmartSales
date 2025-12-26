@@ -29,7 +29,7 @@ st.markdown("""
 top_c1, top_c2 = st.columns([8, 2])
 with top_c2:
     if st.button("🏠 메인화면으로", use_container_width=True):
-        st.switch_page("main_v0.2.py")
+        st.switch_page("main_v0.3.py")
 
 st.title("💰 ROI(투자 회수) 분석 시뮬레이터")
 st.markdown("---")
@@ -117,4 +117,5 @@ with right:
 
 st.markdown("---")
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
+
     st.switch_page("main_v0.2.py")
