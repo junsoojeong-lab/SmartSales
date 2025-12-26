@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 
 st.set_page_config(page_title="CIMON ROI 분석기", layout="wide")
 
+# CSS: 디자인 일관성 및 헤더 스타일 적용
 st.markdown("""
     <style>
     /* 사이드바 완전히 제거 */
@@ -12,6 +13,33 @@ st.markdown("""
     input { color: inherit !important; -webkit-text-fill-color: inherit !important; }
     label p { color: #0077ff !important; font-weight: bold !important; }
     
+    /* 헤더 스타일 (Main 페이지와 동일) */
+    .cimon-header-box {
+        background-color: #004488 !important;
+        padding: 25px !important;
+        border-radius: 0 0 20px 20px !important;
+        margin-bottom: 30px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    }
+    .cimon-company-name {
+        color: #FFFFFF !important;
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    .cimon-dept-name {
+        color: #FFFFFF !important;
+        font-size: 1.0rem !important;
+        font-weight: 400 !important;
+        opacity: 0.9 !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    .vertical-line {
+        margin: 0 15px;
+        border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+        height: 20px;
+    }
+
     .result-section { 
         padding: 25px; border-radius: 12px; 
         border: 1px solid rgba(128, 128, 128, 0.3);
@@ -23,6 +51,17 @@ st.markdown("""
     }
     .val-text { color: #2ea043 !important; font-weight: bold; }
     </style>
+""", unsafe_allow_html=True)
+
+# 헤더 추가 (메인과 동일한 디자인)
+st.markdown("""
+    <div class="cimon-header-box">
+        <div style="display: flex; align-items: center; border: none !important;">
+            <span class="cimon-company-name">(주)싸이몬</span>
+            <div class="vertical-line"></div>
+            <span class="cimon-dept-name">Technical Sales Engineer Team</span>
+        </div>
+    </div>
 """, unsafe_allow_html=True)
 
 # 상단 내비게이션 바
@@ -119,4 +158,5 @@ st.markdown("---")
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
 
     st.switch_page("main_v0.3.py")
+
 
