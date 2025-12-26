@@ -2,7 +2,6 @@ import streamlit as st
 
 st.set_page_config(page_title="CIMON 제품 라인업", layout="wide")
 
-# 디자인 일관성을 위한 CSS
 st.markdown("""
     <style>
     [data-testid="stSidebar"], [data-testid="stSidebarNav"] { display: none !important; }
@@ -21,15 +20,21 @@ st.markdown("""
     .product-spec-card {
         padding: 20px;
         border-radius: 10px;
-        border: 1px solid rgba(128, 128, 128, 0.2);
+        border: 1px solid rgba(128, 128, 128, 0.3);
         background-color: rgba(128, 128, 128, 0.05);
         margin-bottom: 20px;
     }
-    .spec-title { color: #0077ff; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; display: block; }
+    .spec-title { color: #0077ff !important; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; display: block; }
     </style>
 """, unsafe_allow_html=True)
 
-# 헤더 (메인과 동일)
+# 상단 내비게이션 바
+top_c1, top_c2 = st.columns([8, 2])
+with top_c2:
+    if st.button("🏠 메인화면으로", use_container_width=True):
+        st.switch_page("main_v0.3.py")
+
+# 헤더
 st.markdown("""
     <div class="cimon-header-box">
         <div style="display: flex; align-items: center; border: none !important;">
@@ -40,72 +45,40 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 상단 내비게이션
-if st.button("🏠 메인화면으로 돌아가기", use_container_width=True):
-    st.switch_page("main_v0.3.py")
-
 st.title("📦 제품 라인업 요약")
-st.write("CIMON의 핵심 솔루션 라인업 사양입니다.")
 st.markdown("---")
 
 tab1, tab2, tab3 = st.tabs(["PLC", "SCADA", "HMI/IPC"])
 
 with tab1:
-    st.subheader("PLC (Programmable Logic Controller)")
+    st.subheader("CIMON PLC 시리즈")
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown("""
-            <div class="product-spec-card">
-                <span class="spec-title">CP Series (High Performance)</span>
-                <ul>
-                    <li>고속 연산 처리 (0.02us/step)</li>
-                    <li>최대 128,000점 입출력 제어</li>
-                    <li>Ethernet, Serial 내장 포트 제공</li>
-                    <li>이중화 시스템 완벽 지원</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="product-spec-card"><span class="spec-title">CP Series</span><ul><li>고속 연산 (0.02us/step)</li><li>이중화 시스템 지원</li><li>최대 128,000점 제어</li></ul></div>""", unsafe_allow_html=True)
     with c2:
-        st.markdown("""
-            <div class="product-spec-card">
-                <span class="spec-title">XP Series (Compact)</span>
-                <ul>
-                    <li>경제적인 소형 일체형 PLC</li>
-                    <li>PID 제어 및 위치결정 모듈 내장</li>
-                    <li>스마트 팩토리 기초 공정 최적화</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="product-spec-card"><span class="spec-title">XP Series</span><ul><li>소형 일체형 경제형 PLC</li><li>PID 및 위치결정 내장</li><li>스마트 공정 최적화</li></ul></div>""", unsafe_allow_html=True)
 
 with tab2:
-    st.subheader("CIMON SCADA")
-    st.info("💡 싸이몬 스카다는 국내 시장 점유율 1위의 통합 관제 소프트웨어입니다.")
+    st.subheader("CIMON SCADA V4.0")
     st.markdown("""
         <div class="product-spec-card">
-            <span class="spec-title">핵심 특장점</span>
-            <table style="width:100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #ddd;"> <td style="padding:10px;"><b>개방성</b></td> <td>표준 통신 프로토콜(OPC, ODBC 등) 완벽 대응</td> </tr>
-                <tr style="border-bottom: 1px solid #ddd;"> <td style="padding:10px;"><b>확장성</b></td> <td>Web/Mobile 원격 감시 및 제어 지원</td> </tr>
-                <tr style="border-bottom: 1px solid #ddd;"> <td style="padding:10px;"><b>안정성</b></td> <td>서버 이중화 기능을 통한 무중단 운영</td> </tr>
-            </table>
+            <span class="spec-title">국내 시장 점유율 1위 솔루션</span>
+            <ul>
+                <li>표준 통신 프로토콜(OPC, ODBC, MQTT) 완벽 대응</li>
+                <li>Web/Mobile 원격 감시 모듈 제공</li>
+                <li>무중단 운영을 위한 서버 이중화</li>
+            </ul>
         </div>
     """, unsafe_allow_html=True)
 
 with tab3:
-    st.subheader("HMI & Industrial PC")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.image("https://via.placeholder.com/400x250.png?text=CIMON+Xpanel", caption="Xpanel Series")
-    with col_b:
-        st.markdown("""
-            **Xpanel (HMI)**
-            - 고해상도 TFT LCD 채용
-            - 다양한 드라이버 제공 (수천종의 장비 연결)
-            - 강력한 스크립트 기능 지원
-            
-            **Industrial PC**
-            - Fanless 저전력 고성능 설계
-            - 열악한 산업 환경을 고려한 내구성
-            - 10" ~ 21" 다양한 라인업
+    st.subheader("HMI (Xpanel) & IPC")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("""<div class="product-spec-card"><span class="spec-title">Xpanel</span><ul><li>고해상도 TFT LCD</li><li>수천 종의 통신 드라이버</li><li>강력한 스크립트 엔진</li></ul></div>""", unsafe_allow_html=True)
+    with c2:
+        st.markdown("""<div class="product-spec-card"><span class="spec-title">Industrial PC</span><ul><li>Fanless 산업용 내구성</li><li>다양한 사이즈 (10"~21")</li><li>커스텀 사양 대응 가능</li></ul></div>""", unsafe_allow_html=True)
 
-        """)
+st.markdown("---")
+if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
+    st.switch_page("main_v0.3.py")
