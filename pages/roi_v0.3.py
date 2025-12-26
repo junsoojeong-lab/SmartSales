@@ -118,4 +118,5 @@ with right:
 st.markdown("---")
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
 
-    st.switch_page("main_v0.2.py")
+    st.switch_page("main_v0.3.py")
+
