@@ -79,7 +79,7 @@ with tab1:
         st.markdown("""<div class="product-spec-card"><span class="spec-title">XP Series</span><ul><li>소형 일체형 경제형 PLC</li><li>PID 및 위치결정 내장</li><li>스마트 공정 최적화</li></ul></div>""", unsafe_allow_html=True)
 
 with tab2:
-    st.subheader("CIMON SCADA V4.0")
+    st.subheader("CIMON SCADA/SCADA Pro")
     st.markdown("""
         <div class="product-spec-card">
             <span class="spec-title">국내 시장 점유율 1위 솔루션</span>
@@ -92,7 +92,7 @@ with tab2:
     """, unsafe_allow_html=True)
 
 with tab3:
-    st.subheader("HMI (Xpanel) & IPC")
+    st.subheader("HMI(XT,iXT,eXT) & IPC")
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("""<div class="product-spec-card"><span class="spec-title">Xpanel</span><ul><li>고해상도 TFT LCD</li><li>수천 종의 통신 드라이버</li><li>강력한 스크립트 엔진</li></ul></div>""", unsafe_allow_html=True)
@@ -102,4 +102,5 @@ with tab3:
 st.markdown("---")
 # 하단 보조 버튼
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
+
     st.switch_page("main_v0.3.py")
