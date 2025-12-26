@@ -2,18 +2,17 @@ import streamlit as st
 
 st.set_page_config(page_title="CIMON 제품 라인업", layout="wide")
 
-# 디자인 일관성을 위한 CSS
+# CSS: 디자인 일관성 및 여백 조정
 st.markdown("""
     <style>
-    /* 사이드바 완전히 제거 */
     [data-testid="stSidebar"], [data-testid="stSidebarNav"] { display: none !important; }
     
-    /* 헤더 스타일 (Main/ROI 페이지와 동일) */
+    /* 헤더 스타일 */
     .cimon-header-box {
         background-color: #004488 !important;
         padding: 25px !important;
         border-radius: 0 0 20px 20px !important;
-        margin-bottom: 20px !important; /* 버튼과의 간격을 위해 약간 조정 */
+        margin-bottom: 10px !important; /* 아래 버튼과의 간격 최소화 */
         box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
     }
     .cimon-company-name { 
@@ -46,7 +45,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 헤더 (최상단 배치)
+# 1. [최상단] 파란색 헤더 박스
 st.markdown("""
     <div class="cimon-header-box">
         <div style="display: flex; align-items: center; border: none !important;">
@@ -57,16 +56,18 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 2. 내비게이션 바 (헤더 바로 아래 배치)
-top_c1, top_c2 = st.columns([8, 2])
-with top_c2:
+# 2. [헤더 바로 아래] 메인화면 이동 버튼 (우측 정렬 배치)
+# columns를 사용하여 오른쪽 20% 지점에 버튼을 배치합니다.
+_, btn_col = st.columns([8, 2])
+with btn_col:
     if st.button("🏠 메인화면으로", use_container_width=True):
         st.switch_page("main_v0.3.py")
 
+# 3. 본문 내용 시작
 st.title("📦 제품 라인업 요약")
 st.markdown("---")
 
-# 3. 제품 탭 구성
+# 탭 구성 (PLC, SCADA, HMI/IPC)
 tab1, tab2, tab3 = st.tabs(["PLC", "SCADA", "HMI/IPC"])
 
 with tab1:
@@ -99,7 +100,6 @@ with tab3:
         st.markdown("""<div class="product-spec-card"><span class="spec-title">Industrial PC</span><ul><li>Fanless 산업용 내구성</li><li>다양한 사이즈 (10"~21")</li><li>커스텀 사양 대응 가능</li></ul></div>""", unsafe_allow_html=True)
 
 st.markdown("---")
-
-# 4. 하단 돌아가기 버튼
+# 하단 보조 버튼
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
     st.switch_page("main_v0.3.py")
