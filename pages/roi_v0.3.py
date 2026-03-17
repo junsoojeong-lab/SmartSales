@@ -96,46 +96,74 @@ with left:
     invest = cimon_input("싸이몬 솔루션 도입 비용", 1, 5000, "inv")
     is_redun = st.toggle("솔루션 이중화(Redundancy) 적용", value=True)
 
-# 계산 로직 (가중치)
+# [수정] 계산 로직: 초기(1년차) 절감액 계산
 pdm = (faults * loss) * 0.6
 redun = (faults * loss * 0.3) if is_redun else 0
 ene_save = energy * 0.1
 def_save = defect * 0.2
 lab_save = staff * salary
-total_save = pdm + redun + ene_save + def_save + lab_save
-payback = invest / total_save if total_save > 0 else 0
+base_total_save = pdm + redun + ene_save + def_save + lab_save
+
+# [추가] 지수 성장을 위한 파라미터 (내부 지표)
+# 매년 자동화 최적화로 인해 효율이 15%씩 복리로 개선된다고 가정
+annual_growth_rate = 0.15 
+
+# [수정] 5개년 누적 현금흐름 계산 (Exponential)
+years_list = list(range(6))
+cash_flow = []
+cumulative_savings = 0
+
+for i in years_list:
+    if i == 0:
+        # 0년차는 투자비만 지출된 상태
+        cash_flow.append(-invest)
+    else:
+        # 매년 절감액이 annual_growth_rate만큼 지수적으로 증가
+        # 당해연도 절감액 = 초기절감액 * (1 + 성장률)^(n-1)
+        yearly_benefit = base_total_save * ((1 + annual_growth_rate) ** (i - 1))
+        cumulative_savings += yearly_benefit
+        cash_flow.append(cumulative_savings - invest)
+
+# 투자 회수 기간 계산 (단순 계산 대신 정밀 계산 가능하지만 UI 유지를 위해 유지)
+payback = invest / base_total_save if base_total_save > 0 else 0
 
 with right:
     st.subheader("📊 시뮬레이션 리포트")
     r1, r2 = st.columns(2)
-    with r1: st.metric("연간 기대 총 절감액", f"{total_save/1e8:.2f} 억")
+    # 1년차 기준 표시
+    with r1: st.metric("1년차 기대 절감액", f"{base_total_save/1e8:.2f} 억")
     with r2: st.metric("예상 투자 회수 기간", f"{payback:.2f} 년")
 
-    # --- 그래프 수정 파트: 라이트/다크 테마 자동 대응 ---
-    years = [f"{i}년" for i in range(6)]
-    cash_flow = [(total_save * i) - invest for i in range(6)]
+    # --- 그래프 파트 (Exponential Curve 시각화) ---
+    years_label = [f"{i}년" for i in range(6)]
     
-    fig = go.Figure(go.Scatter(
-        x=years, 
+    fig = go.Figure()
+    
+    # 누적 수익 곡선
+    fig.add_trace(go.Scatter(
+        x=years_label, 
         y=cash_flow, 
         mode='lines+markers+text',
-        text=[f"{v/10000:,.0f}만" for v in cash_flow],
+        text=[f"{v/1e8:.1f}억" if abs(v) >= 1e8 else f"{v/1e4:,.0f}만" for v in cash_flow],
         textposition="top center",
         fill='tozeroy', 
-        line=dict(color='#0077ff', width=4),
-        marker=dict(size=8, color='#2ea043')
+        line=dict(color='#0077ff', width=4, shape='spline'), # spline으로 곡선화
+        marker=dict(size=10, color='#2ea043')
     ))
     
+    # 손익분기점(0원) 라인 추가
+    fig.add_hline(y=0, line_dash="dash", line_color="red", opacity=0.5)
+    
     fig.update_layout(
-        template="none", # 특정 테마를 강제하지 않음
-        height=350, 
+        template="none",
+        height=380, 
         margin=dict(l=10, r=10, t=30, b=10),
-        paper_bgcolor='rgba(0,0,0,0)', # 배경 투명화
-        plot_bgcolor='rgba(0,0,0,0)',  # 차트 영역 투명화
-        hovermode="x unified"
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        hovermode="x unified",
+        title=dict(text="자동화 도입 후 누적 수익 (지수 성장 모델 적용)", font=dict(size=14))
     )
     
-    # 그리드 선을 반투명하게 설정하여 배경색에 관계없이 조화롭게 표현
     fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
     
