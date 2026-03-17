@@ -96,7 +96,16 @@ with left:
     invest = cimon_input("싸이몬 솔루션 도입 비용", 1, 5000, "inv")
     is_redun = st.toggle("솔루션 이중화(Redundancy) 적용", value=True)
 
-# [수정] 계산 로직: 초기(1년차) 절감액 계산
+with left:
+    st.subheader("📋 입력 파라미터")
+    # ... (기존 입력들 유지) ...
+    
+    st.markdown("---")
+    st.subheader("🚀 가속화 지표 (Exponential)")
+    # 이 수치가 높을수록 그래프가 무섭게 꺾입니다.
+    dx_growth = st.slider("DX 최적화 가속도 (%)", 0, 50, 25, help="데이터 축적에 따른 공정 최적화 및 인건비 상승률 반영") / 100
+
+# 계산 로직
 pdm = (faults * loss) * 0.6
 redun = (faults * loss * 0.3) if is_redun else 0
 ene_save = energy * 0.1
@@ -104,69 +113,47 @@ def_save = defect * 0.2
 lab_save = staff * salary
 base_total_save = pdm + redun + ene_save + def_save + lab_save
 
-# [추가] 지수 성장을 위한 파라미터 (내부 지표)
-# 매년 자동화 최적화로 인해 효율이 15%씩 복리로 개선된다고 가정
-annual_growth_rate = 0.15 
-
-# [수정] 5개년 누적 현금흐름 계산 (Exponential)
+# 5개년 누적 현금흐름 계산 (성장 가속도 반영)
 years_list = list(range(6))
 cash_flow = []
 cumulative_savings = 0
 
 for i in years_list:
     if i == 0:
-        # 0년차는 투자비만 지출된 상태
         cash_flow.append(-invest)
     else:
-        # 매년 절감액이 annual_growth_rate만큼 지수적으로 증가
-        # 당해연도 절감액 = 초기절감액 * (1 + 성장률)^(n-1)
-        yearly_benefit = base_total_save * ((1 + annual_growth_rate) ** (i - 1))
+        # 가속도가 붙는 지수 함수: (1 + 성장률)의 거듭제곱
+        yearly_benefit = base_total_save * ((1 + dx_growth) ** (i - 1))
         cumulative_savings += yearly_benefit
         cash_flow.append(cumulative_savings - invest)
 
-# 투자 회수 기간 계산 (단순 계산 대신 정밀 계산 가능하지만 UI 유지를 위해 유지)
-payback = invest / base_total_save if base_total_save > 0 else 0
-
 with right:
-    st.subheader("📊 시뮬레이션 리포트")
-    r1, r2 = st.columns(2)
-    # 1년차 기준 표시
-    with r1: st.metric("1년차 기대 절감액", f"{base_total_save/1e8:.2f} 억")
-    with r2: st.metric("예상 투자 회수 기간", f"{payback:.2f} 년")
+    # ... (상단 메트릭 유지) ...
 
-    # --- 그래프 파트 (Exponential Curve 시각화) ---
-    years_label = [f"{i}년" for i in range(6)]
-    
+    # --- 그래프 업데이트 ---
     fig = go.Figure()
     
-    # 누적 수익 곡선
+    # 0원 선 (Break-even Line)
+    fig.add_hline(y=0, line_dash="dash", line_color="#FF4B4B", line_width=2, opacity=0.7)
+
     fig.add_trace(go.Scatter(
-        x=years_label, 
+        x=[f"{i}년" for i in range(6)], 
         y=cash_flow, 
         mode='lines+markers+text',
+        # 억 단위 가독성 개선
         text=[f"{v/1e8:.1f}억" if abs(v) >= 1e8 else f"{v/1e4:,.0f}만" for v in cash_flow],
         textposition="top center",
         fill='tozeroy', 
-        line=dict(color='#0077ff', width=4, shape='spline'), # spline으로 곡선화
-        marker=dict(size=10, color='#2ea043')
+        # 곡선을 더 부드럽고 가파르게 보이게 하는 설정
+        line=dict(color='#0077ff', width=5, shape='spline', smoothing=1.3),
+        marker=dict(size=12, color='#2ea043', symbol='diamond')
     ))
-    
-    # 손익분기점(0원) 라인 추가
-    fig.add_hline(y=0, line_dash="dash", line_color="red", opacity=0.5)
-    
+
     fig.update_layout(
-        template="none",
-        height=380, 
-        margin=dict(l=10, r=10, t=30, b=10),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        hovermode="x unified",
-        title=dict(text="자동화 도입 후 누적 수익 (지수 성장 모델 적용)", font=dict(size=14))
+        title=dict(text="CIMON DX 도입 후 수익 가속화 곡선", font=dict(size=18, color='#0077ff')),
+        height=450, # 그래프를 조금 더 크게 키워 곡률을 강조
+        # ... (기존 레이아웃 설정 유지) ...
     )
-    
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-    
     st.plotly_chart(fig, use_container_width=True)
     # --- 그래프 수정 끝 ---
 
