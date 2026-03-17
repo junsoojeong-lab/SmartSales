@@ -80,7 +80,7 @@ with left:
     st.subheader("📋 입력 파라미터")
     faults = st.slider("연간 돌발 고장 횟수 (회)", 0, 50, 5)
     
-    # 억/만 입력 함수
+    # 기존 cimon_input 함수 유지
     def cimon_input(label, default_uk=0, default_man=0, key=""):
         st.markdown(f"**{label}**")
         c1, c2 = st.columns(2)
@@ -95,17 +95,12 @@ with left:
     salary = st.number_input("인당 평균 연봉 (만원)", 3000, 15000, 4500) * 1e4
     invest = cimon_input("싸이몬 솔루션 도입 비용", 1, 5000, "inv")
     is_redun = st.toggle("솔루션 이중화(Redundancy) 적용", value=True)
-
-with left:
-    st.subheader("📋 입력 파라미터")
-    # ... (기존 입력들 유지) ...
     
     st.markdown("---")
-    st.subheader("🚀 가속화 지표 (Exponential)")
-    # 이 수치가 높을수록 그래프가 무섭게 꺾입니다.
-    dx_growth = st.slider("DX 최적화 가속도 (%)", 0, 50, 25, help="데이터 축적에 따른 공정 최적화 및 인건비 상승률 반영") / 100
+    # 그래프를 가파르게 만들기 위한 지수 가속도 슬라이더 추가
+    dx_growth = st.slider("🚀 DX 최적화 가속도 (연간 성장률 %)", 0, 50, 20) / 100
 
-# 계산 로직
+# 계산 로직 (기존 항목 유지)
 pdm = (faults * loss) * 0.6
 redun = (faults * loss * 0.3) if is_redun else 0
 ene_save = energy * 0.1
@@ -113,61 +108,68 @@ def_save = defect * 0.2
 lab_save = staff * salary
 base_total_save = pdm + redun + ene_save + def_save + lab_save
 
-# 5개년 누적 현금흐름 계산 (성장 가속도 반영)
-years_list = list(range(6))
+# [보강] 10년치 시뮬레이션 (투자회수 시점을 더 명확히 보기 위해 범위를 넓힘)
+years_range = list(range(11))
 cash_flow = []
 cumulative_savings = 0
+payback_year = None
 
-for i in years_list:
+for i in years_range:
     if i == 0:
         cash_flow.append(-invest)
     else:
-        # 가속도가 붙는 지수 함수: (1 + 성장률)의 거듭제곱
+        # 지수적 성장 적용: yearly_benefit = 첫해절감액 * (1+g)^(n-1)
         yearly_benefit = base_total_save * ((1 + dx_growth) ** (i - 1))
         cumulative_savings += yearly_benefit
-        cash_flow.append(cumulative_savings - invest)
+        net_value = cumulative_savings - invest
+        cash_flow.append(net_value)
+        
+        # 투자 회수 시점(Break-even) 판독
+        if payback_year is None and net_value >= 0:
+            # 선형 보간법으로 대략적인 소수점 연도 계산
+            prev_val = cash_flow[i-1]
+            payback_year = (i - 1) + (abs(prev_val) / (net_value + abs(prev_val)))
 
 with right:
-    # ... (상단 메트릭 유지) ...
+    st.subheader("📊 시뮬레이션 리포트")
+    r1, r2 = st.columns(2)
+    with r1: st.metric("1년차 기대 절감액", f"{base_total_save/1e8:.2f} 억")
+    with r2: 
+        pb_text = f"{payback_year:.2f} 년" if payback_year else "회수 불가"
+        st.metric("예상 투자 회수 기간", pb_text)
 
-    # --- 그래프 업데이트 ---
+    # 그래프 시각화
     fig = go.Figure()
-    
-    # 0원 선 (Break-even Line)
-    fig.add_hline(y=0, line_dash="dash", line_color="#FF4B4B", line_width=2, opacity=0.7)
+    fig.add_hline(y=0, line_dash="dash", line_color="#FF4B4B", line_width=2) # 손익분기선
 
     fig.add_trace(go.Scatter(
-        x=[f"{i}년" for i in range(6)], 
+        x=[f"{i}년" for i in years_range], 
         y=cash_flow, 
-        mode='lines+markers+text',
-        # 억 단위 가독성 개선
-        text=[f"{v/1e8:.1f}억" if abs(v) >= 1e8 else f"{v/1e4:,.0f}만" for v in cash_flow],
-        textposition="top center",
+        mode='lines+markers',
         fill='tozeroy', 
-        # 곡선을 더 부드럽고 가파르게 보이게 하는 설정
-        line=dict(color='#0077ff', width=5, shape='spline', smoothing=1.3),
-        marker=dict(size=12, color='#2ea043', symbol='diamond')
+        line=dict(color='#0077ff', width=4, shape='spline', smoothing=1.3),
+        marker=dict(size=8, color='#2ea043'),
+        hovertemplate='%{x} 누적 수익: %{y:,.0f}원<extra></extra>'
     ))
 
     fig.update_layout(
-        title=dict(text="CIMON DX 도입 후 수익 가속화 곡선", font=dict(size=18, color='#0077ff')),
-        height=450, # 그래프를 조금 더 크게 키워 곡률을 강조
-        # ... (기존 레이아웃 설정 유지) ...
+        template="none", height=400, margin=dict(l=10, r=10, t=30, b=10),
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        hovermode="x unified"
     )
     st.plotly_chart(fig, use_container_width=True)
-    # --- 그래프 수정 끝 ---
 
-    # 세부 절감 항목
+    # 기존에 있던 세부 절감 항목 HTML 섹션 (내용 유지)
     st.markdown(f"""
     <div class="result-section">
-        <p style="font-weight:bold; color:#0077ff; border-bottom:2px solid #0077ff; padding-bottom:5px;">📋 세부 절감 항목</p>
+        <p style="font-weight:bold; color:#0077ff; border-bottom:2px solid #0077ff; padding-bottom:5px;">📋 세부 절감 항목 (1년차 기준)</p>
         <div class="saving-item"><span>🛠️ 예측 유지보수(PdM) 효과</span> <span class="val-text">{pdm/1e4:,.0f} 만원</span></div>
         <div class="saving-item"><span>🛡️ 이중화 솔루션 안정성</span> <span class="val-text">{redun/1e4:,.0f} 만원</span></div>
         <div class="saving-item"><span>⚡ 에너지 사용 최적화</span> <span class="val-text">{ene_save/1e4:,.0f} 만원</span></div>
         <div class="saving-item"><span>✅ 품질 개선(불량률 감소)</span> <span class="val-text">{def_save/1e4:,.0f} 만원</span></div>
         <div class="saving-item"><span>👤 인적 자원 효율화</span> <span class="val-text">{lab_save/1e4:,.0f} 만원</span></div>
     </div>
-    """, unsafe_allow_html=True) 
+    """, unsafe_allow_html=True)
 
 st.markdown("---")
 if st.button("◀ 메인 페이지로 돌아가기", key="bottom_back", use_container_width=True):
